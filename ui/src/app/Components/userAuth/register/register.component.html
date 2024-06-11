@@ -1,0 +1,50 @@
+<br />
+<br />
+<br />
+<div class="wrapper fadeInDown p-2">
+  <div id="formContent">
+    <!-- Login Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="fadeIn third mt-5"
+        name="login"
+        placeholder="name"
+      />
+      <input
+        type="text"
+        id="login"
+        formControlName="email"
+        class="fadeIn second"
+        name="login"
+        placeholder="email"
+      />
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="fadeIn third"
+        name="login"
+        placeholder="password"
+      />
+
+      <input type="file" class="input mb-4 mt-3 ml-4 fadeIn third" (input)="photoUpload($event)" />
+
+      <input type="submit" class="fadeIn fourth" value="Log In" />
+    </form>
+
+    <!-- Remind Password -->
+    <div id="formFooter">
+      <label class="label">Already have an account?</label>
+      <a
+        class="underlineHover"
+        [routerLink]="['/login']"
+        routerLinkActive="router-link-active"
+      >
+        Login</a
+      ><br />
+    </div>
+  </div>
+</div>

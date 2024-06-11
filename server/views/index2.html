@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Rooms Example</title>
+  </head>
+  <body>
+    <h1>Socket.IO Rooms Example</h1>
+    <input id="room" placeholder="Room name" />
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="leaveRoom()">Leave Room</button>
+    <br /><br />
+    <input id="message" placeholder="Message" />
+    <button onclick="sendMessage()">Send Message</button>
+    <ul id="messages"></ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io("/chat");
+
+      function joinRoom() {
+        const room = document.getElementById("room").value;
+        socket.emit("join room", room);
+      }
+
+      function leaveRoom() {
+        const room = document.getElementById("room").value;
+        socket.emit("leave room", room);
+      }
+
+      function sendMessage() {
+        const room = document.getElementById("room").value;
+        const message = document.getElementById("message").value;
+        socket.emit("room message", { room, message });
+      }
+
+      socket.on("room message", (data) => {
+        const li = document.createElement("li");
+        li.textContent = `${data.user}: ${data.message}`;
+        document.getElementById("messages").appendChild(li);
+      });
+
+      socket.on("receive-message", (data) => {
+        const li = document.createElement("li");
+        li.textContent = `${data.user}: ${data.message}`;
+        document.getElementById("messages").appendChild(li);
+      });
+    </script>
+  </body>
+</html>

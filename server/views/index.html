@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Chat</title>
+  </head>
+  <body>
+    <input id="username" placeholder="Enter your username" />
+    <button onclick="register()">Register</button>
+    <br />
+    <input id="toUser" placeholder="Send to username" />
+    <input id="privateMessage" placeholder="Enter private message" />
+    <button onclick="sendPrivateMessage()">Send Private Message</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      function register() {
+        var username = document.getElementById("username").value;
+        socket.emit("register", username);
+      }
+
+      function sendPrivateMessage() {
+        var toUser = document.getElementById("toUser").value;
+        var message = document.getElementById("privateMessage").value;
+        socket.emit("private message", { to: toUser, message: message });
+      }
+      socket.emit("update item", "1", { name: "updated" }, (response) => {
+        console.log(response.status); // ok
+      });
+
+      socket.on("private message", (data) => {
+        console.log(`Private message from ${data.from}: ${data.message}`);
+      });
+    </script>
+  </body>
+</html>
