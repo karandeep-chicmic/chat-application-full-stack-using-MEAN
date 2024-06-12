@@ -65,21 +65,20 @@ const startExpress = async (app, server) => {
     if (data.auth) {
       middlewares.push(authorizeUser());
     }
-    if (data.schema) {
-      middlewares.push(validate(data.schema));
-    }
     if (data.file) {
       middlewares.push(uploads.single("file"));
+    }
+    if (data.schema) {
+      middlewares.push(validate(data.schema));
     }
 
     app
       .route(data.path)
       [data.method.toLowerCase()](...middlewares, handlers(data));
   });
+  app.get("/", (req, res) => {
+    res.sendFile(SERVER.VIEW_PATH_2);
+  });
 };
 
 module.exports = startExpress;
-
-// app.get("/", (req, res) => {
-//   res.sendFile(SERVER.VIEW_PATH_2);
-// });

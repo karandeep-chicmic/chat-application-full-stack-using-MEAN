@@ -3,7 +3,7 @@ const SERVER = {
   VIEW_PATH:
     "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application/server/views/index.html",
   VIEW_PATH_2:
-    "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application/server/views/index2.html",
+    "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application-2/chat-application-to-push/server/views/index2.html",
   DB_USERS_PATH:
     "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application-2/chat-application-full-stack/server/database/usersDb.json",
 };

@@ -1,10 +1,10 @@
 const fs = require("fs");
 const { RESPONSE_MSGS } = require("../constants");
 const jwt = require("jsonwebtoken");
-
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-const { readUsers, writeUsers } = require("../fileSystem/userReadWrite");
+
+const { userModel } = require("../models/userModel");
 
 dotenv.config();
 
@@ -15,42 +15,23 @@ async function deleteUser(req, res) {}
 
 async function registerUser(payload) {
   const { name, email, password, file } = payload;
-  
-  console.log(payload);
+
   const salt = bcrypt.genSaltSync(saltRounds);
-  
+
   const objToSaveToDb = {
-    id: Date.now(),
     name: name,
     password: bcrypt.hashSync(password, salt),
     email: email,
     profilePicture: file.path,
   };
 
-  console.log(objToSaveToDb);
-  const usersArr = await readUsers();
-  const usersJson = usersArr;
-
-  const user = usersJson.dataArray.find(
-    (data) => data.email === objToSaveToDb.email
-  );
-
-  if (user) {
-    return {
-      statusCode: 400,
-      data: RESPONSE_MSGS.USER_EXIST,
-    };
-  }
-
-  //  push to the array
-  usersJson.dataArray.push(objToSaveToDb);
-
-  await writeUsers(usersJson);
+  const registerUserM = await userModel.create(objToSaveToDb);
 
   const response = {
     message: "User Added Successfully",
-    userDetails: objToSaveToDb,
+    userDetails: registerUserM,
   };
+
   return {
     statusCode: 201,
     data: response,
@@ -60,18 +41,9 @@ async function registerUser(payload) {
 async function loginUser(payload) {
   const { email, password } = payload;
 
-  const usersArr = await readUsers();
-
-  const usersJson = usersArr;
-
-  const userFound = usersJson.dataArray.find((data) => {
-    if (data.email === email) {
-      return true;
-    }
-    return false;
-  });
-
   var passwordMatch;
+  var userFound = await userModel.findOne({ email: email });
+
   if (userFound) {
     passwordMatch = bcrypt.compareSync(password, userFound.password);
   } else {

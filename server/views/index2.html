@@ -33,7 +33,7 @@
         socket.emit("room message", { room, message });
       }
 
-      socket.on("room message", (data) => {
+      socket.on("join-room", (data) => {
         const li = document.createElement("li");
         li.textContent = `${data.user}: ${data.message}`;
         document.getElementById("messages").appendChild(li);
@@ -41,6 +41,8 @@
 
       socket.on("receive-message", (data) => {
         const li = document.createElement("li");
+
+        console.log("gyyyyyyyyyyyyyyy");
         li.textContent = `${data.user}: ${data.message}`;
         document.getElementById("messages").appendChild(li);
       });

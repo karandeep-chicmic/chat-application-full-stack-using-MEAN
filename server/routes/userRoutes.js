@@ -24,10 +24,7 @@ const userRoutes = [
       body: {
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
-      },
-      query: {
-        query: Joi.string().min(8).required(),
-      },
+      }
     },
     auth: false,
     file: false,

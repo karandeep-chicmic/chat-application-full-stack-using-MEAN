@@ -1,4 +1,4 @@
-const Joi = require("joi")
+const Joi = require("joi");
 
 let validateStatus = (result) => {
   console.log("result", result);
@@ -11,7 +11,7 @@ let validateStatus = (result) => {
 const validate = (schema) => {
   return (req, res, next) => {
     try {
-      if (req.body && Object.keys(req.body)?.length) {        
+      if (req.body && Object.keys(req.body)?.length) {
         const result = Joi.object(schema.body).validate(req.body);
         req.body = validateStatus(result);
       }
@@ -30,4 +30,4 @@ const validate = (schema) => {
     next();
   };
 };
-module.exports = {validate}
+module.exports = { validate };

@@ -1,4 +1,5 @@
 const { SOCKET_EVENTS } = require("../constants.js");
+const { messagesModel } = require("../models/messagesModel.js");
 
 // Creating a room name for user
 const createRoomName = (senderId, receiverId) => {
@@ -26,7 +27,8 @@ const events = async (socket, io) => {
 
   socket.on(
     SOCKET_EVENTS.SEND_MESSAGE,
-    (senderId, receiverId, roomId, messageContent) => {
+    async (senderId, receiverId, roomId, messageContent) => {
+      try{
       const message = {
         roomId: roomId,
         senderId: senderId,
@@ -34,9 +36,16 @@ const events = async (socket, io) => {
         messageContent: messageContent,
       };
 
-      //
-      io.to(roomId).emit(SOCKET_EVENTS.RECEIVE_MESSAGE, message);
-    }
+      const messageSent = await messagesModel.create({
+        sendersId: senderId,
+        receiversId: receiverId,
+        roomId: roomId,
+        messageContent: messageContent,
+      });
+      
+      io.to(roomId).emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
+    }catch(e){console.log(e)}
+  }
   );
 
   //   socket.on(SOCKET_EVENTS.RECEIVE_MESSAGE, (data) => {
