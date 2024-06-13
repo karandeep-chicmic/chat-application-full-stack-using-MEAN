@@ -51,10 +51,10 @@ export class RegisterComponent {
     formData.append('file', this.selectedImage);
 
     this.apiCalls.registerUser(formData).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         console.log(data);
-        
-        this.router.navigate([ROUTES_UI.LOGIN]);
+        localStorage.setItem('token', data.token);
+        this.router.navigate([ROUTES_UI.CHAT]);
       },
       error: (err) => {
         this.sweetAlert.error(err.error.message);

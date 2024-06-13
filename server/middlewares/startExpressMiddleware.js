@@ -22,7 +22,9 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage: storage });
 
 const handlers = (route) => {
+  
   return (req, res) => {
+
     let payload = {
       ...(req.body || {}),
       ...(req.query || {}),
@@ -75,6 +77,8 @@ const startExpress = async (app, server) => {
     app
       .route(data.path)
       [data.method.toLowerCase()](...middlewares, handlers(data));
+
+    
   });
   app.get("/", (req, res) => {
     res.sendFile(SERVER.VIEW_PATH_2);

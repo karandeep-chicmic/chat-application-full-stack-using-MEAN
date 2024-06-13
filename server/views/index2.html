@@ -41,9 +41,9 @@
 
       socket.on("receive-message", (data) => {
         const li = document.createElement("li");
+        console.log("ffffffffffffff", data);
 
-        console.log("gyyyyyyyyyyyyyyy");
-        li.textContent = `${data.user}: ${data.message}`;
+        li.textContent = `${data.sendersId}: ${data.messageContent}`;
         document.getElementById("messages").appendChild(li);
       });
     </script>

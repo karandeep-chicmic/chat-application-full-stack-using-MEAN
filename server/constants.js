@@ -28,6 +28,8 @@ const RESPONSE_MSGS = {
   FILL_FIELDS_CORRECTlY: "Please fill all fields correctly",
   WRONG_PASSWORD: "Wrong Password try again",
   TASK_DELETED_SUCCESSFULLY: "Task deleted successfully !!",
+  NO_MESSAGES: "No Message found!!",
+  NO_ROOMS_FOUND: "Cannot Find room for the user !!",
 };
 
 module.exports = { SERVER, SOCKET_EVENTS, RESPONSE_MSGS };

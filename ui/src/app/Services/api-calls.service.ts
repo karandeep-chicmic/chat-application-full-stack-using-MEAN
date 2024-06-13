@@ -18,4 +18,8 @@ export class ApiCallsService {
   registerUser(userData: FormData) {
     return this.http.post(API_ROUTES.BASE_URL + API_ROUTES.REGISTER, userData);
   }
+
+  getRooms() {
+    return this.http.get(API_ROUTES.BASE_URL + API_ROUTES.ROOM_GET);
+  }
 }

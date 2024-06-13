@@ -1,5 +1,10 @@
 const Joi = require("joi");
-const { loginUser, registerUser } = require("../controllers/userController");
+const {
+  loginUser,
+  registerUser,
+  getUserById,
+  getUser,
+} = require("../controllers/userController");
 
 const userRoutes = [
   {
@@ -24,11 +29,32 @@ const userRoutes = [
       body: {
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
-      }
+      },
     },
     auth: false,
     file: false,
     controller: loginUser,
+  },
+  {
+    method: "GET",
+    path: "/user/:id",
+    schema: {
+      params: {
+        id: Joi.string().required(),
+      },
+    },
+    auth: true,
+    file: false,
+    controller: getUserById,
+  },
+  {
+    method: "GET",
+    path: "/user",
+    schema: {
+    },
+    auth: true,
+    file: false,
+    controller: getUser,
   },
 ];
 

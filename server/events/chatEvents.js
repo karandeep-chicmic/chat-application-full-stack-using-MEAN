@@ -1,5 +1,7 @@
 const { SOCKET_EVENTS } = require("../constants.js");
 const { messagesModel } = require("../models/messagesModel.js");
+const { roomModel } = require("../models/roomsModel.js");
+const { userModel } = require("../models/userModel.js");
 
 // Creating a room name for user
 const createRoomName = (senderId, receiverId) => {
@@ -11,46 +13,77 @@ const events = async (socket, io) => {
   console.log("New user connected to chat with id : ", socket.id);
 
   // Join room for one user
-  socket.on(SOCKET_EVENTS.JOIN_ROOM, (sendersId, receiverId, callback) => {
-    if (typeof callback !== "function") {
-      console.error("Callback is not a function");
-      return;
+  socket.on(
+    SOCKET_EVENTS.JOIN_ROOM,
+    async (sendersId, receiverId, callback) => {
+      if (typeof callback !== "function") {
+        console.error("Callback is not a function");
+        return;
+      }
+
+      const roomName = createRoomName(sendersId, receiverId);
+
+      socket.join(roomName);
+
+      let usersArr = [];
+      const sender = await userModel.findOne({ _id: sendersId }).lean();
+      const receiver = await userModel.findOne({ _id: receiverId }).lean();
+
+      usersArr.push({
+        _id: sender._id,
+        name: sender.name,
+        email: sender.email,
+        profilePicture: sender.profilePicture,
+      });
+
+      usersArr.push({
+        _id: receiver._id,
+        name: receiver.name,
+        email: receiver.email,
+        profilePicture: receiver.profilePicture,
+      });
+
+      console.log(`Room joined. named: ${roomName}`);
+      const data = await roomModel.findOneAndUpdate(
+        { roomName: roomName },
+        {
+          $set: {
+            roomName: roomName,
+            users: usersArr,
+          },
+        },
+        { upsert: true }
+      );
+
+      callback({ roomId: roomName, data: data });
     }
-
-    const roomName = createRoomName(sendersId, receiverId);
-
-    socket.join(roomName);
-
-    console.log(`Room joined. named: ${roomName}`);
-    callback({ roomId: roomName });
-  });
+  );
 
   socket.on(
     SOCKET_EVENTS.SEND_MESSAGE,
     async (senderId, receiverId, roomId, messageContent) => {
-      try{
-      const message = {
-        roomId: roomId,
-        senderId: senderId,
-        receiverId: receiverId,
-        messageContent: messageContent,
-      };
+      try {
+        const message = {
+          roomId: roomId,
+          senderId: senderId,
+          receiverId: receiverId,
+          messageContent: messageContent,
+        };
 
-      const messageSent = await messagesModel.create({
-        sendersId: senderId,
-        receiversId: receiverId,
-        roomId: roomId,
-        messageContent: messageContent,
-      });
-      
-      io.to(roomId).emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
-    }catch(e){console.log(e)}
-  }
+        const messageSent = await messagesModel.create({
+          sendersId: senderId,
+          receiversId: receiverId,
+          roomId: roomId,
+          messageContent: messageContent,
+        });
+
+        socket.emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
+        socket.to(roomId).emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
+      } catch (e) {
+        console.log(e);
+      }
+    }
   );
-
-  //   socket.on(SOCKET_EVENTS.RECEIVE_MESSAGE, (data) => {
-  //     console.log("Received message", data);
-  //   });
 
   //   On disconnection
   socket.on(SOCKET_EVENTS.DISCONNECT, () => {

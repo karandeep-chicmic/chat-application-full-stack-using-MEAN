@@ -3,6 +3,8 @@ const { RESPONSE_MSGS } = require("../constants");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
 const { userModel } = require("../models/userModel");
 
@@ -10,6 +12,39 @@ dotenv.config();
 
 const saltRounds = 10;
 async function getUsers(req, res) {}
+
+async function getUser(payload) {
+  let { userId } = payload;
+  const data = await userModel.findOne({ _id: userId });
+
+  if (data) {
+    return {
+      statusCode: 200,
+      data: data,
+    };
+  }
+
+  return {
+    statusCode: 404,
+    data: RESPONSE_MSGS.INVALID_CREDENTIALS,
+  };
+}
+async function getUserById(payload) {
+  let { id } = payload;
+  const data = await userModel.findOne({ _id: id });
+
+  if (data) {
+    return {
+      statusCode: 200,
+      data: data,
+    };
+  }
+
+  return {
+    statusCode: 404,
+    data: RESPONSE_MSGS.INVALID_CREDENTIALS,
+  };
+}
 
 async function deleteUser(req, res) {}
 
@@ -27,9 +62,19 @@ async function registerUser(payload) {
 
   const registerUserM = await userModel.create(objToSaveToDb);
 
+  const token = jwt.sign(
+    { id: registerUserM._id, email: email },
+    process.env.TOKEN_SECRET,
+    {
+      expiresIn: "2500s",
+    }
+  );
+
   const response = {
     message: "User Added Successfully",
     userDetails: registerUserM,
+    token: token,
+    userId: registerUserM._id
   };
 
   return {
@@ -68,6 +113,7 @@ async function loginUser(payload) {
         message: RESPONSE_MSGS.SUCCESS,
         token: token,
         email: email,
+        userId: userFound._id,
       },
     };
   } else {
@@ -80,4 +126,12 @@ async function loginUser(payload) {
 
 async function updateUser(req, res) {}
 
-module.exports = { updateUser, getUsers, loginUser, registerUser, deleteUser };
+module.exports = {
+  updateUser,
+  getUsers,
+  loginUser,
+  registerUser,
+  deleteUser,
+  getUserById,
+  getUser,
+};

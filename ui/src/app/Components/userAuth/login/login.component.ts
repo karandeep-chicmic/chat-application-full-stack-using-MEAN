@@ -42,8 +42,11 @@ export class LoginComponent {
 
     this.apiCalls.loginUser(userToLogin).subscribe({
       next: (data: any) => {
+        console.log(data);
+
         localStorage.setItem('token', data.token);
-        this.router.navigate([ROUTES_UI.TASK_PAGE]);
+        localStorage.setItem('userId', data.userId);
+        this.router.navigate([ROUTES_UI.CHAT]);
       },
       error: (err) => {
         console.log('ERROR IS :', err);
