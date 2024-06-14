@@ -258,3 +258,78 @@ body {
 .name{
     color: #D8DADF;
 }
+.modal-header{
+  background-color: #343838;
+  color: #f9f9f9;
+}
+
+
+
+/* styles.css */
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.modal-title {
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.modal-header.mb-3 {
+  margin-bottom: 1rem;
+}
+
+input.p-2 {
+  padding: 0.5rem;
+  margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button.btn {
+  margin-top: 10px;
+}
+
+button.btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+button.btn-primary.p-2 {
+  padding: 0.5rem;
+}
+
+button.btn-dark {
+  background-color: #343a40;
+  border: none;
+  color: white;
+}
+
+button.btn-dark.p-2 {
+  padding: 0.5rem;
+}
+
+button.btn-dark {
+  margin: 5px 0;
+}
+.names {
+  display: flex;
+}
+
+.btnuser{
+  margin-right: 10px;
+}
+.users-head{
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+.create-group{
+  margin-top: 200px;
+}

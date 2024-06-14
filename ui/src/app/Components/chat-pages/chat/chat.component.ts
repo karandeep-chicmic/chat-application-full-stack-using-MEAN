@@ -24,6 +24,7 @@ export class ChatComponent {
 
   @Input() chatData: any;
   @Input() selectedId: any;
+  @Input() userPicture: any;
   @ViewChild('chatHistory') chatHistoryContainer!: ElementRef;
 
   // All the chat messages associated with the selected user

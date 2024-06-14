@@ -13,7 +13,13 @@ import { ModalComponent } from '../../modal/modal.component';
 @Component({
   selector: 'app-chat-home',
   standalone: true,
-  imports: [ChatComponent, FormsModule, CommonModule, NavbarComponent,ModalComponent],
+  imports: [
+    ChatComponent,
+    FormsModule,
+    CommonModule,
+    NavbarComponent,
+    ModalComponent,
+  ],
   templateUrl: './chat-home.component.html',
   styleUrl: './chat-home.component.css',
 })
@@ -22,9 +28,11 @@ export class ChatHomeComponent {
   sockets: SocketEventsService = inject(SocketEventsService);
 
   dataBySearch: any[] = [];
+  allUsers: any;
   defaultData: dataBySearch[] = [];
   chatData: any;
   selectedId: string | undefined = '';
+  userPicture: any;
   alreadyChatWithUser: any;
   username: string | null = 'temp';
   altImgURl: string = '';
@@ -34,6 +42,7 @@ export class ChatHomeComponent {
 
   ngOnInit(): void {
     this.setUsers(true);
+    this.getAllUsers();
     this.sockets.subjectToUpdate.subscribe(() => {
       this.setUsers();
     });
@@ -56,7 +65,14 @@ export class ChatHomeComponent {
   openModal() {
     this.isModalVisible = !this.isModalVisible;
   }
-  
+
+  getAllUsers(){
+    this.apiCalls.searchUser("gmail").subscribe((data: any) => {
+      this.allUsers = data
+      // console.log("jjjjjjjjjjjjj", data);
+      
+    });
+  }
   setUsers(option?: boolean) {
     this.apiCalls.getRooms().subscribe({
       next: (data: any) => {
@@ -79,6 +95,8 @@ export class ChatHomeComponent {
             this.dataBySearch[0]._id,
             userLocal
           );
+          // this.allUsers = this.dataBySearch
+          this.userPicture = this.dataBySearch[0].profilePicture
           console.log(this.selectedId);
         }
       },
@@ -102,12 +120,13 @@ export class ChatHomeComponent {
   findImage(profileImagePath: string | undefined, err?: string) {}
 
   // Get Chat of user on Click
-  getChat(id: string | undefined, name: string) {
+  getChat(id: string | undefined, name: string, userPicture: string) {
     console.log(id);
     const userId = sessionStorage.getItem('userId');
 
     const roomName = this.createRoomName(id, userId);
 
+    this.userPicture = userPicture;
     this.selectedId = roomName;
     this.chatData = name;
 
