@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 })
 export class AuthInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const authToken = localStorage.getItem('token');
+    const authToken = sessionStorage.getItem('token');
 
     let authReq = req.clone();
     if (authToken) {

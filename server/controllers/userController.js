@@ -1,56 +1,105 @@
 const fs = require("fs");
 const { RESPONSE_MSGS } = require("../constants");
 const jwt = require("jsonwebtoken");
-
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-const { readUsers, writeUsers } = require("../fileSystem/userReadWrite");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
+
+const { userModel } = require("../models/userModel");
 
 dotenv.config();
 
 const saltRounds = 10;
-async function getUsers(req, res) {}
+
+// get all users
+async function getUsers(payload) {
+  const { searchInput } = payload;
+
+  const data = await userModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { name: { $regex: searchInput, $options: "i" } },
+          { email: { $regex: searchInput, $options: "i" } },
+        ],
+      },
+    },
+    {
+      $project: { name: 1, email: 1, profilePicture: 1, _id: 1 },
+    },
+  ]);
+
+  return {
+    statusCode: 200,
+    data: data,
+  };
+}
+
+async function getUser(payload) {
+  let { userId } = payload;
+  const data = await userModel.findOne({ _id: userId });
+
+  if (data) {
+    return {
+      statusCode: 200,
+      data: data,
+    };
+  }
+
+  return {
+    statusCode: 404,
+    data: RESPONSE_MSGS.INVALID_CREDENTIALS,
+  };
+}
+async function getUserById(payload) {
+  let { id } = payload;
+  const data = await userModel.findOne({ _id: id });
+
+  if (data) {
+    return {
+      statusCode: 200,
+      data: data,
+    };
+  }
+
+  return {
+    statusCode: 404,
+    data: RESPONSE_MSGS.INVALID_CREDENTIALS,
+  };
+}
 
 async function deleteUser(req, res) {}
 
 async function registerUser(payload) {
   const { name, email, password, file } = payload;
-  
-  console.log(payload);
+
   const salt = bcrypt.genSaltSync(saltRounds);
-  
+
   const objToSaveToDb = {
-    id: Date.now(),
     name: name,
     password: bcrypt.hashSync(password, salt),
     email: email,
     profilePicture: file.path,
   };
 
-  console.log(objToSaveToDb);
-  const usersArr = await readUsers();
-  const usersJson = usersArr;
+  const registerUserM = await userModel.create(objToSaveToDb);
 
-  const user = usersJson.dataArray.find(
-    (data) => data.email === objToSaveToDb.email
+  const token = jwt.sign(
+    { id: registerUserM._id, email: email },
+    process.env.TOKEN_SECRET,
+    {
+      expiresIn: "2500s",
+    }
   );
-
-  if (user) {
-    return {
-      statusCode: 400,
-      data: RESPONSE_MSGS.USER_EXIST,
-    };
-  }
-
-  //  push to the array
-  usersJson.dataArray.push(objToSaveToDb);
-
-  await writeUsers(usersJson);
 
   const response = {
     message: "User Added Successfully",
-    userDetails: objToSaveToDb,
+    userDetails: registerUserM,
+    token: token,
+    userId: registerUserM._id,
   };
+
   return {
     statusCode: 201,
     data: response,
@@ -60,18 +109,9 @@ async function registerUser(payload) {
 async function loginUser(payload) {
   const { email, password } = payload;
 
-  const usersArr = await readUsers();
-
-  const usersJson = usersArr;
-
-  const userFound = usersJson.dataArray.find((data) => {
-    if (data.email === email) {
-      return true;
-    }
-    return false;
-  });
-
   var passwordMatch;
+  var userFound = await userModel.findOne({ email: email });
+
   if (userFound) {
     passwordMatch = bcrypt.compareSync(password, userFound.password);
   } else {
@@ -96,6 +136,7 @@ async function loginUser(payload) {
         message: RESPONSE_MSGS.SUCCESS,
         token: token,
         email: email,
+        userId: userFound._id,
       },
     };
   } else {
@@ -108,4 +149,12 @@ async function loginUser(payload) {
 
 async function updateUser(req, res) {}
 
-module.exports = { updateUser, getUsers, loginUser, registerUser, deleteUser };
+module.exports = {
+  updateUser,
+  getUsers,
+  loginUser,
+  registerUser,
+  deleteUser,
+  getUserById,
+  getUser,
+};

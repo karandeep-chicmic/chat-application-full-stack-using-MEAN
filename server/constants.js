@@ -3,7 +3,7 @@ const SERVER = {
   VIEW_PATH:
     "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application/server/views/index.html",
   VIEW_PATH_2:
-    "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application/server/views/index2.html",
+    "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application-2/chat-application-to-push/server/views/index2.html",
   DB_USERS_PATH:
     "/home/karandeep/Desktop/Karan Practice/Node/sockets/chat-application-2/chat-application-full-stack/server/database/usersDb.json",
 };
@@ -28,6 +28,8 @@ const RESPONSE_MSGS = {
   FILL_FIELDS_CORRECTlY: "Please fill all fields correctly",
   WRONG_PASSWORD: "Wrong Password try again",
   TASK_DELETED_SUCCESSFULLY: "Task deleted successfully !!",
+  NO_MESSAGES: "No Message found!!",
+  NO_ROOMS_FOUND: "Cannot Find room for the user !!",
 };
 
 module.exports = { SERVER, SOCKET_EVENTS, RESPONSE_MSGS };
