@@ -11,7 +11,30 @@ const { userModel } = require("../models/userModel");
 dotenv.config();
 
 const saltRounds = 10;
-async function getUsers(req, res) {}
+
+// get all users
+async function getUsers(payload) {
+  const { searchInput } = payload;
+
+  const data = await userModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { name: { $regex: searchInput, $options: "i" } },
+          { email: { $regex: searchInput, $options: "i" } },
+        ],
+      },
+    },
+    {
+      $project: { name: 1, email: 1, profilePicture: 1, _id: 1 },
+    },
+  ]);
+
+  return {
+    statusCode: 200,
+    data: data,
+  };
+}
 
 async function getUser(payload) {
   let { userId } = payload;
@@ -74,7 +97,7 @@ async function registerUser(payload) {
     message: "User Added Successfully",
     userDetails: registerUserM,
     token: token,
-    userId: registerUserM._id
+    userId: registerUserM._id,
   };
 
   return {

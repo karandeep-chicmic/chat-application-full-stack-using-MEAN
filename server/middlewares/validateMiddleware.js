@@ -1,7 +1,6 @@
 const Joi = require("joi");
 
 let validateStatus = (result) => {
-  console.log("result", result);
   if (result.error) {
     throw result.error.details[0].message;
   }

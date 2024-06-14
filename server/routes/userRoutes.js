@@ -4,6 +4,7 @@ const {
   registerUser,
   getUserById,
   getUser,
+  getUsers,
 } = require("../controllers/userController");
 
 const userRoutes = [
@@ -50,11 +51,18 @@ const userRoutes = [
   {
     method: "GET",
     path: "/user",
-    schema: {
-    },
+    schema: {},
     auth: true,
     file: false,
     controller: getUser,
+  },
+  {
+    method: "GET",
+    path: "/user/search/:searchInput",
+    schema: {},
+    auth: true,
+    file: false,
+    controller: getUsers,
   },
 ];
 

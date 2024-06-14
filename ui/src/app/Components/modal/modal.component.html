@@ -1,0 +1,7 @@
+<div class="modal" [class.show]="isVisible" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <ng-content></ng-content>
+    </div>
+  </div>
+  

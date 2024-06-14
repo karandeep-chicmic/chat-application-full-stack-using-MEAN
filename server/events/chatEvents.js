@@ -5,13 +5,11 @@ const { userModel } = require("../models/userModel.js");
 
 // Creating a room name for user
 const createRoomName = (senderId, receiverId) => {
-  console.log([senderId, receiverId].sort().join("-"));
   return [senderId, receiverId].sort().join("-");
 };
 
 const events = async (socket, io) => {
   console.log("New user connected to chat with id : ", socket.id);
-
   // Join room for one user
   socket.on(
     SOCKET_EVENTS.JOIN_ROOM,
@@ -43,7 +41,6 @@ const events = async (socket, io) => {
         profilePicture: receiver.profilePicture,
       });
 
-      console.log(`Room joined. named: ${roomName}`);
       const data = await roomModel.findOneAndUpdate(
         { roomName: roomName },
         {
@@ -61,7 +58,11 @@ const events = async (socket, io) => {
 
   socket.on(
     SOCKET_EVENTS.SEND_MESSAGE,
-    async (senderId, receiverId, roomId, messageContent) => {
+    async (senderId, receiverId, roomId, messageContent, callback) => {
+      if (typeof callback !== "function") {
+        console.error("Callback is not a function");
+        return;
+      }
       try {
         const message = {
           roomId: roomId,
@@ -79,6 +80,8 @@ const events = async (socket, io) => {
 
         socket.emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
         socket.to(roomId).emit(SOCKET_EVENTS.RECEIVE_MESSAGE, messageSent);
+
+        callback({ messageSent });
       } catch (e) {
         console.log(e);
       }

@@ -10,6 +10,7 @@ import { ApiCallsService } from '../../../Services/api-calls.service';
 import { Router, RouterModule } from '@angular/router';
 import { ROUTES_UI } from '../../../constants';
 import { SweetAlertService } from '../../../Services/sweet-alert.service';
+import { SocketEventsService } from '../../../Services/socket-events.service';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ export class LoginComponent {
   formBuilder: FormBuilder = inject(FormBuilder);
   apiCalls: ApiCallsService = inject(ApiCallsService);
   sweetAlert: SweetAlertService = inject(SweetAlertService);
+  sockets: SocketEventsService = inject(SocketEventsService);
   router: Router = inject(Router);
 
   form: FormGroup = this.formBuilder.group({
@@ -44,8 +46,11 @@ export class LoginComponent {
       next: (data: any) => {
         console.log(data);
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', data.userId);
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('userId', data.userId);
+
+        this.sockets.selectedUser.set(data.userId);
+        
         this.router.navigate([ROUTES_UI.CHAT]);
       },
       error: (err) => {

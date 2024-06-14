@@ -4,19 +4,19 @@
     <!-- <button (click)="loadMoreMsgs()" class="load-messages-btn">Load Previous Messages</button> -->
     <!-- {{ chatMessages | json }} -->
     <!-- </div> -->
-    <ul *ngFor="let chat of chatMessages?.data">
-      <li *ngIf="chat?.senderEmail !== selectedId" class="clearfix">
+    <ul *ngFor="let chat of chatMessages">
+      <li *ngIf="chat?.sendersId === userLoggedIn" class="clearfix">
         <div class="message-data align-right">
           <span class="message-data-time">{{
-            chat?.dateTime | date : "short"
+            chat?.createdAt | date : "short"
           }}</span>
           &nbsp; &nbsp;
           <!-- {{chat | json}} -->
-          <span class="message-data-name">{{ chat?.senderEmail }}</span>
-          <i class="fa fa-circle me"></i>
+          <!-- <span class="message-data-name">{{ chat?. }}</span> -->
+          <!-- <i class="fa fa-circle me"></i> -->
         </div>
         <div class="message other-message float-right">
-          <span>{{ chat?.message }}</span
+          <span>{{ chat?.messageContent }}</span
           ><br /><br />
           <div *ngIf="chat?.type === 2" class="">
             <img
@@ -40,17 +40,17 @@
         </div>
       </li>
 
-      <li *ngIf="chat?.senderEmail === selectedId">
+      <li *ngIf="chat?.sendersId !== userLoggedIn">
         <div class="message-data">
           <span class="message-data-name"
             ><i class="fa fa-circle online"></i> {{ chat?.senderEmail }}</span
           >
           <span class="message-data-time">{{
-            chat?.dateTime | date : "short"
+            chat?.createdAt | date : "short"
           }}</span>
         </div>
         <div class="message my-message">
-          {{ chat?.message }}
+          {{ chat?.messageContent }}
           <br /><br />
           <div *ngIf="chat?.type === 2" class="">
             <img
@@ -85,8 +85,8 @@
       rows="3"
       (keydown)="onEnter($event)"
     ></textarea>
-    <label for="file-upload" class="custom-file-upload">📎</label>
-    <input (input)="fileUpload($event)" id="file-upload" type="file" />
+    <!-- <label for="file-upload" class="custom-file-upload">📎</label>
+    <input (input)="fileUpload($event)" id="file-upload" type="file" /> -->
     <button type="submit" class="btn btn-success send-btn">➤</button>
   </form>
 </div>

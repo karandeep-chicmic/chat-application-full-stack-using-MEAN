@@ -3,8 +3,13 @@
   <div class="people-list" (blur)="setToDefault()" id="people-list">
     <div class="search">
       <input type="text" placeholder="search" (input)="searchUser($event)" />
-      <i class="fa fa-search"></i>
+      <i class="fa fa-search"></i><br /><br />
+      <button class="btn btn-dark" (click)="openModal()">Add Group</button>
     </div>
+    <app-modal [isVisible]="isModalVisible">
+      <h2>Modal Title</h2>
+      <p>Some content for the modal..</p>
+    </app-modal>
     <ul class="list" *ngFor="let data of dataBySearch">
       <li class="clearfix">
         <img
@@ -12,7 +17,7 @@
           (error)="findImage('', 'er')"
           alt="avatar"
         />
-        <div class="about" (click)="getChat(data._id)">
+        <div class="about" (click)="getChat(data._id, data.name)">
           <div class="name">{{ data.name }}</div>
 
           <div class="status">
@@ -33,7 +38,7 @@
       />
 
       <div class="chat-about">
-        <div class="chat-with">{{ selectedId }}</div>
+        <div class="chat-with">{{ chatData }}</div>
         <div class="chat-num-messages">already 1 902 messages</div>
       </div>
       <i class="fa fa-star"></i>

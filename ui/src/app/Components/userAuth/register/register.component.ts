@@ -53,7 +53,7 @@ export class RegisterComponent {
     this.apiCalls.registerUser(formData).subscribe({
       next: (data: any) => {
         console.log(data);
-        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('token', data.token);
         this.router.navigate([ROUTES_UI.CHAT]);
       },
       error: (err) => {

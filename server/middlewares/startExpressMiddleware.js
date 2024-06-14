@@ -7,6 +7,7 @@ const { events } = require("../events/chatEvents");
 const { routes } = require("../routes/allRoutes");
 const { authorizeUser } = require("./authMiddleware");
 const { validate } = require("./validateMiddleware");
+const { socketAuth } = require("./socketAuth");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -22,9 +23,7 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage: storage });
 
 const handlers = (route) => {
-  
   return (req, res) => {
-
     let payload = {
       ...(req.body || {}),
       ...(req.query || {}),
@@ -52,6 +51,9 @@ const startExpress = async (app, server) => {
   app.use("/public", express.static("public"));
 
   const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:4200",
+    },
     connectionStateRecovery: {
       maxDisconnectionDuration: 2 * 60 * 1000,
       skipMiddlewares: true,
@@ -77,8 +79,6 @@ const startExpress = async (app, server) => {
     app
       .route(data.path)
       [data.method.toLowerCase()](...middlewares, handlers(data));
-
-    
   });
   app.get("/", (req, res) => {
     res.sendFile(SERVER.VIEW_PATH_2);
