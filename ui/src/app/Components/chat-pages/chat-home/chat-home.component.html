@@ -8,22 +8,40 @@
     </div>
     <app-modal [isVisible]="isModalVisible">
       <h4 class="modal-title">Create Group</h4>
-      <div class="modal-header">
-        <span>Name</span>
-        <input class="p-2 " />
-      </div>
+      <form [formGroup]="form" (ngSubmit)="createGroup()">
+        <div class="modal-header">
+          <span>Name</span>
+          <input formControlName="name" class="p-2" />
+        </div>
 
-      <div class="modal-header mb-3">
-        <h6 class="modal-title">Add User</h6>
-        <input class="p-2" type="text" />
-        <button class="btn btn-dark p-2">Add</button>
-      </div>
+        <div class="modal-header mb-3">
+          <h6 class="modal-title">Add User</h6>
+          <input formControlName="addUsers" class="p-2" type="text" />
+          <button
+            type="button"
+            (click)="addUsersToGroup()"
+            class="btn btn-dark p-2"
+          >
+            Add
+          </button>
+        </div>
 
-      <div class="names" >
-        <h4 class="users-head">users</h4>
-        <button *ngFor="let user of allUsers" class="btn btn-danger btnuser">{{ user.name }}</button>
-      </div>
-      <button class="btn btn-primary p-2 create-group">Create Group</button>
+        <div class="names">
+          <h4 class="users-head">users</h4>
+          <span *ngFor="let user of allUsers">
+            <button
+              type="button"
+              class="btn btn-danger btnuser"
+              (click)="selectedEmailForGc(user._id, user.email)"
+            >
+              {{ user.email }}
+            </button>
+          </span>
+        </div>
+        <button type="submit" class="btn btn-primary p-2 create-group">
+          Create Group
+        </button>
+      </form>
     </app-modal>
     <ul class="list" *ngFor="let data of dataBySearch">
       <li class="clearfix">
@@ -43,6 +61,22 @@
 
             <i class="fa fa-circle online" *ngIf="data?.isActive"> online</i>
           </div>
+        </div>
+      </li>
+    </ul>
+   <div class="mb-4">
+    <span *ngIf="groupsData.length >= 1" class="groupsHeading"> Groups</span>
+   </div>
+    <ul class="list" *ngFor="let data of groupsData">
+      <li class="clearfix">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvFqQJwHPRZMHCHRvOf5NAfJHoZAx0HkvXgg&s"
+          (error)="findImage('', 'er')"
+          alt="avatar"
+        />
+        <div class="about" (click)="getGroupChat()">
+          <div class="name">{{ data.roomName }}</div>
+
         </div>
       </li>
     </ul>

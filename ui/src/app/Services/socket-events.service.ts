@@ -70,4 +70,12 @@ export class SocketEventsService {
   ) {
     this.socket.emit('join-room', sendersId, receieversId, (data: any) => {});
   }
+
+  joinGroupRoom(name: string, users: any[]) {
+    this.socket.emit('group-join', users, name, (data: any) => {});
+  }
+
+  joinByGroupName(name: string) {
+    this.socket.emit('join-by-group-name', name);
+  }
 }

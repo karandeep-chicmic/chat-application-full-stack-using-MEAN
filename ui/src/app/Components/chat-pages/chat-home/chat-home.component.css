@@ -326,10 +326,15 @@ button.btn-dark {
   margin-right: 10px;
 }
 .users-head{
-  margin-top: 10px;
+  margin-top: 50px;
   margin-right: 20px;
 }
 
 .create-group{
   margin-top: 200px;
+}
+.groupsHeading{
+  color: #d1d1d1;
+  margin-left: 40px;
+  margin-bottom: 60px;
 }

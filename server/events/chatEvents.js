@@ -10,6 +10,53 @@ const createRoomName = (senderId, receiverId) => {
 
 const events = async (socket, io) => {
   console.log("New user connected to chat with id : ", socket.id);
+
+  // join room by roomname
+  socket.on(SOCKET_EVENTS.JOIN_BY_ROOM_NAME, (roomName) =>{
+    socket.join(roomName);
+  })
+
+
+  socket.on(
+    SOCKET_EVENTS.GROUP_JOIN,
+    async (usersArr, roomName, callback) => {
+      if (typeof callback !== "function") {
+        console.error("Callback is not a function");
+        return;
+      }
+
+      try {
+        const users = await Promise.all(
+          usersArr.map(async (user) => {
+            const findUser = await userModel.findOne({ _id: user });
+            return {
+              _id: findUser._id,
+              name: findUser.name,
+              email: findUser.email,
+              profilePicture: findUser.profilePicture,
+            };
+          })
+        );
+
+        const data = await roomModel.findOneAndUpdate(
+          { roomName: roomName },
+          {
+            $set: {
+              roomName: roomName,
+              users: users,
+            },
+          },
+          { upsert: true }
+        );
+
+        callback({ roomId: roomName, data: users });
+      } catch (error) {
+        console.error("Error finding users: ", error);
+        callback({ roomId: roomName, data: [], error: "Error finding users" });
+      }
+    }
+  );
+
   // Join room for one user
   socket.on(
     SOCKET_EVENTS.JOIN_ROOM,
