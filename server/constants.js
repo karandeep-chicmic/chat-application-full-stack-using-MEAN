@@ -13,6 +13,8 @@ const SOCKET_EVENTS = {
   JOIN_ROOM: "join-room",
   SEND_MESSAGE: "send-message",
   RECEIVE_MESSAGE: "receive-message",
+  GROUP_JOIN:"group-join",
+  JOIN_BY_ROOM_NAME: "join-by-room-name"
 };
 
 const RESPONSE_MSGS = {

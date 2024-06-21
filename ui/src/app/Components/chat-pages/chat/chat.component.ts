@@ -24,6 +24,7 @@ export class ChatComponent {
 
   @Input() chatData: any;
   @Input() selectedId: any;
+  @Input() userPicture: any;
   @ViewChild('chatHistory') chatHistoryContainer!: ElementRef;
 
   // All the chat messages associated with the selected user
@@ -58,8 +59,6 @@ export class ChatComponent {
     this.sockets.messages = [];
     this.apiCalls.getChat(this.selectedId).subscribe({
       next: (data: any) => {
-        console.log('msgggggggggg', data);
-
         // this.chatMessages = data;
         data.forEach((element: any) => {
           this.sockets.messages.push(element);

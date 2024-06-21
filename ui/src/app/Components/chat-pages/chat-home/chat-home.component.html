@@ -7,8 +7,41 @@
       <button class="btn btn-dark" (click)="openModal()">Add Group</button>
     </div>
     <app-modal [isVisible]="isModalVisible">
-      <h2>Modal Title</h2>
-      <p>Some content for the modal..</p>
+      <h4 class="modal-title">Create Group</h4>
+      <form [formGroup]="form" (ngSubmit)="createGroup()">
+        <div class="modal-header">
+          <span>Name</span>
+          <input formControlName="name" class="p-2" />
+        </div>
+
+        <div class="modal-header mb-3">
+          <h6 class="modal-title">Add User</h6>
+          <input formControlName="addUsers" class="p-2" type="text" />
+          <button
+            type="button"
+            (click)="addUsersToGroup()"
+            class="btn btn-dark p-2"
+          >
+            Add
+          </button>
+        </div>
+
+        <div class="names">
+          <h4 class="users-head">users</h4>
+          <span *ngFor="let user of allUsers">
+            <button
+              type="button"
+              class="btn btn-danger btnuser"
+              (click)="selectedEmailForGc(user._id, user.email)"
+            >
+              {{ user.email }}
+            </button>
+          </span>
+        </div>
+        <button type="submit" class="btn btn-primary p-2 create-group">
+          Create Group
+        </button>
+      </form>
     </app-modal>
     <ul class="list" *ngFor="let data of dataBySearch">
       <li class="clearfix">
@@ -17,7 +50,10 @@
           (error)="findImage('', 'er')"
           alt="avatar"
         />
-        <div class="about" (click)="getChat(data._id, data.name)">
+        <div
+          class="about"
+          (click)="getChat(data._id, data.name, data.profilePicture)"
+        >
           <div class="name">{{ data.name }}</div>
 
           <div class="status">
@@ -28,14 +64,27 @@
         </div>
       </li>
     </ul>
+   <div class="mb-4">
+    <span *ngIf="groupsData.length >= 1" class="groupsHeading"> Groups</span>
+   </div>
+    <ul class="list" *ngFor="let data of groupsData">
+      <li class="clearfix">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvFqQJwHPRZMHCHRvOf5NAfJHoZAx0HkvXgg&s"
+          (error)="findImage('', 'er')"
+          alt="avatar"
+        />
+        <div class="about" (click)="getGroupChat()">
+          <div class="name">{{ data.roomName }}</div>
+
+        </div>
+      </li>
+    </ul>
   </div>
 
   <div class="chat">
     <div class="chat-header clearfix">
-      <img
-        src="https://images.pexels.com/photos/3792581/pexels-photo-3792581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        alt="avatar"
-      />
+      <img [src]="'http://localhost:3030/' + userPicture" alt="avatar" />
 
       <div class="chat-about">
         <div class="chat-with">{{ chatData }}</div>
@@ -46,7 +95,11 @@
     <!-- end chat-header -->
 
     <!--  For loading each chat -->
-    <app-chat [chatData]="chatData" [selectedId]="selectedId"></app-chat>
+    <app-chat
+      [chatData]="chatData"
+      [userPicture]="userPicture"
+      [selectedId]="selectedId"
+    ></app-chat>
   </div>
   <!-- end chat -->
 </div>
